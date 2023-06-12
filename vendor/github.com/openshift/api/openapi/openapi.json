@@ -328,7 +328,7 @@
       }
     },
     "com.github.openshift.api.apps.v1.DeploymentConfig": {
-      "description": "Deployment Configs define the template for a pod and manages deploying new images or configuration changes. A single deployment configuration is usually analogous to a single micro-service. Can support many different deployment patterns, including full restart, customizable rolling updates, and  fully custom behaviors, as well as pre- and post- deployment hooks. Each individual deployment is represented as a replication controller.\n\nA deployment is \"triggered\" when its configuration is changed or a tag in an Image Stream is changed. Triggers can be disabled to allow manual control over a deployment. The \"strategy\" determines how the deployment is carried out and may be changed at any time. The `latestVersion` field is updated when a new deployment is triggered by any means.\n\nCompatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).",
+      "description": "Deployment Configs define the template for a pod and manages deploying new images or configuration changes. A single deployment configuration is usually analogous to a single micro-service. Can support many different deployment patterns, including full restart, customizable rolling updates, and  fully custom behaviors, as well as pre- and post- deployment hooks. Each individual deployment is represented as a replication controller.\n\nA deployment is \"triggered\" when its configuration is changed or a tag in an Image Stream is changed. Triggers can be disabled to allow manual control over a deployment. The \"strategy\" determines how the deployment is carried out and may be changed at any time. The `latestVersion` field is updated when a new deployment is triggered by any means.\n\nCompatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer). Deprecated: Use deployments or other means for declarative updates for pods instead.",
       "type": "object",
       "required": [
         "spec"
@@ -4122,6 +4122,17 @@
     "com.github.openshift.api.config.v1.APIServerStatus": {
       "type": "object"
     },
+    "com.github.openshift.api.config.v1.AWSDNSSpec": {
+      "description": "AWSDNSSpec contains DNS configuration specific to the Amazon Web Services cloud provider.",
+      "type": "object",
+      "properties": {
+        "privateZoneIAMRole": {
+          "description": "privateZoneIAMRole contains the ARN of an IAM role that should be assumed when performing operations on the cluster's private hosted zone specified in the cluster DNS config. When left empty, no role should be assumed.",
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
     "com.github.openshift.api.config.v1.AWSIngressSpec": {
       "description": "AWSIngressSpec holds the desired state of the Ingress for Amazon Web Services infrastructure provider. This only includes fields that can be modified in the cluster.",
       "type": "object",
@@ -5720,6 +5731,32 @@
         }
       }
     },
+    "com.github.openshift.api.config.v1.DNSPlatformSpec": {
+      "description": "DNSPlatformSpec holds cloud-provider-specific configuration for DNS administration.",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "aws": {
+          "description": "aws contains DNS configuration specific to the Amazon Web Services cloud provider.",
+          "$ref": "#/definitions/com.github.openshift.api.config.v1.AWSDNSSpec"
+        },
+        "type": {
+          "description": "type is the underlying infrastructure provider for the cluster. Allowed values: \"\", \"AWS\".\n\nIndividual components may not support all platforms, and must handle unrecognized platforms with best-effort defaults.",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "x-kubernetes-unions": [
+        {
+          "discriminator": "type",
+          "fields-to-discriminateBy": {
+            "aws": "AWS"
+          }
+        }
+      ]
+    },
     "com.github.openshift.api.config.v1.DNSSpec": {
       "type": "object",
       "required": [
@@ -5730,6 +5767,11 @@
           "description": "baseDomain is the base domain of the cluster. All managed DNS records will be sub-domains of this base.\n\nFor example, given the base domain `openshift.example.com`, an API server DNS record may be created for `cluster-api.openshift.example.com`.\n\nOnce set, this field cannot be changed.",
           "type": "string",
           "default": ""
+        },
+        "platform": {
+          "description": "platform holds configuration specific to the underlying infrastructure provider for DNS. When omitted, this means the user has no opinion and the platform is left to choose reasonable defaults. These defaults are subject to change over time.",
+          "default": {},
+          "$ref": "#/definitions/com.github.openshift.api.config.v1.DNSPlatformSpec"
         },
         "privateZone": {
           "description": "privateZone is the location where all the DNS records that are only available internally to the cluster exist.\n\nIf this field is nil, no private records should be created.\n\nOnce set, this field cannot be changed.",
@@ -17205,6 +17247,14 @@
             "$ref": "#/definitions/com.github.openshift.api.machine.v1.GCPFailureDomain"
           }
         },
+        "openstack": {
+          "description": "OpenStack configures failure domain information for the OpenStack platform.",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/com.github.openshift.api.machine.v1.OpenStackFailureDomain"
+          }
+        },
         "platform": {
           "description": "Platform identifies the platform for which the FailureDomain represents. Currently supported values are AWS, Azure, and GCP.",
           "type": "string",
@@ -17217,7 +17267,8 @@
           "fields-to-discriminateBy": {
             "aws": "AWS",
             "azure": "Azure",
-            "gcp": "GCP"
+            "gcp": "GCP",
+            "openstack": "OpenStack"
           }
         }
       ]
@@ -17457,6 +17508,20 @@
         }
       }
     },
+    "com.github.openshift.api.machine.v1.OpenStackFailureDomain": {
+      "description": "OpenStackFailureDomain configures failure domain information for the OpenStack platform.",
+      "type": "object",
+      "properties": {
+        "availabilityZone": {
+          "description": "availabilityZone is the nova availability zone in which the OpenStack machine provider will create the VM. If not specified, the VM will be created in the default availability zone specified in the nova configuration. Availability zone names must NOT contain : since it is used by admin users to specify hosts where instances are launched in server creation. Also, it must not contain spaces otherwise it will lead to node that belongs to this availability zone register failure, see kubernetes/cloud-provider-openstack#1379 for further information. The maximum length of availability zone name is 63 as per labels limits.",
+          "type": "string"
+        },
+        "rootVolume": {
+          "description": "rootVolume contains settings that will be used by the OpenStack machine provider to create the root volume attached to the VM. If not specified, no root volume will be created.",
+          "$ref": "#/definitions/com.github.openshift.api.machine.v1.RootVolume"
+        }
+      }
+    },
     "com.github.openshift.api.machine.v1.PowerVSMachineProviderConfig": {
       "description": "PowerVSMachineProviderConfig is the type that will be embedded in a Machine.Spec.ProviderSpec field for a PowerVS virtual machine. It is used by the PowerVS machine actuator to create a single Machine.\n\nCompatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).",
       "type": "object",
@@ -17617,6 +17682,16 @@
         }
       },
       "x-kubernetes-map-type": "atomic"
+    },
+    "com.github.openshift.api.machine.v1.RootVolume": {
+      "description": "RootVolume represents the volume metadata to boot from. The original RootVolume struct is defined in the v1alpha1 but it's not best practice to use it directly here so we define a new one that should stay in sync with the original one.",
+      "type": "object",
+      "properties": {
+        "availabilityZone": {
+          "description": "availabilityZone specifies the Cinder availability zone where the root volume will be created. If not specifified, the root volume will be created in the availability zone specified by the volume type in the cinder configuration. If the volume type (configured in the OpenStack cluster) does not specify an availability zone, the root volume will be created in the default availability zone specified in the cinder configuration. See https://docs.openstack.org/cinder/latest/admin/availability-zone-type.html for more details. If the OpenStack cluster is deployed with the cross_az_attach configuration option set to false, the root volume will have to be in the same availability zone as the VM (defined by OpenStackFailureDomain.AvailabilityZone). Availability zone names must NOT contain spaces otherwise it will lead to volume that belongs to this availability zone register failure, see kubernetes/cloud-provider-openstack#1379 for further information. The maximum length of availability zone name is 63 as per labels limits.",
+          "type": "string"
+        }
+      }
     },
     "com.github.openshift.api.machine.v1.SystemDiskProperties": {
       "description": "SystemDiskProperties contains the information regarding the system disk including performance, size, name, and category",
@@ -23727,7 +23802,14 @@
     },
     "com.github.openshift.api.operator.v1.ContainerLoggingDestinationParameters": {
       "description": "ContainerLoggingDestinationParameters describes parameters for the Container logging destination type.",
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "maxLength": {
+          "description": "maxLength is the maximum length of the log message.\n\nValid values are integers in the range 480 to 8192, inclusive.\n\nWhen omitted, the default value is 1024.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "com.github.openshift.api.operator.v1.DNS": {
       "description": "DNS manages the CoreDNS component to provide a name resolution service for pods and services in the cluster.\n\nThis supports the DNS-based service discovery specification: https://github.com/kubernetes/dns/blob/master/docs/specification.md\n\nMore details: https://kubernetes.io/docs/tasks/administer-cluster/coredns\n\nCompatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).",
@@ -24346,6 +24428,11 @@
           "description": "policy is used to determine the order in which upstream servers are selected for querying. Any one of the following values may be specified:\n\n* \"Random\" picks a random upstream server for each query. * \"RoundRobin\" picks upstream servers in a round-robin order, moving to the next server for each new query. * \"Sequential\" tries querying upstream servers in a sequential order until one responds, starting with the first server for each new query.\n\nThe default value is \"Random\"",
           "type": "string"
         },
+        "protocolStrategy": {
+          "description": "protocolStrategy specifies the protocol to use for upstream DNS requests. Valid values for protocolStrategy are \"TCP\" and omitted. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is to use the protocol of the original client request. \"TCP\" specifies that the platform should use TCP for all upstream DNS requests, even if the client request uses UDP. \"TCP\" is useful for UDP-specific issues such as those created by non-compliant upstream resolvers, but may consume more bandwidth or increase DNS response time. Note that protocolStrategy only affects the protocol of DNS requests that CoreDNS makes to upstream resolvers. It does not affect the protocol of DNS requests between clients and CoreDNS.",
+          "type": "string",
+          "default": ""
+        },
         "transportConfig": {
           "description": "transportConfig is used to configure the transport type, server name, and optional custom CA or CA bundle to use when forwarding DNS requests to an upstream resolver.\n\nThe default value is \"\" (empty) which results in a standard cleartext connection being used when forwarding DNS requests to an upstream resolver.",
           "default": {},
@@ -24415,6 +24502,10 @@
       "description": "GatewayConfig holds node gateway-related parsed config file parameters and command-line overrides",
       "type": "object",
       "properties": {
+        "ipForwarding": {
+          "description": "IPForwarding controls IP forwarding for all traffic on OVN-Kubernetes managed interfaces (such as br-ex). By default this is set to Restricted, and Kubernetes related traffic is still forwarded appropriately, but other IP traffic will not be routed by the OCP node. If there is a desire to allow the host to forward traffic across OVN-Kubernetes managed interfaces, then set this field to \"Global\". The supported values are \"Restricted\" and \"Global\".",
+          "type": "string"
+        },
         "routingViaHost": {
           "description": "RoutingViaHost allows pod egress traffic to exit via the ovn-k8s-mp0 management port into the host before sending it out. If this is not set, traffic will always egress directly from OVN to outside without touching the host stack. Setting this to true means hardware offload will not be supported. Default is false if GatewayConfig is specified.",
           "type": "boolean"
@@ -26978,6 +27069,11 @@
           "type": "integer",
           "format": "int64"
         },
+        "maxLogFiles": {
+          "description": "maxLogFiles specifies the maximum number of ACL_audit log files that can be present. Default: 5",
+          "type": "integer",
+          "format": "int32"
+        },
         "rateLimit": {
           "description": "rateLimit is the approximate maximum number of messages to generate per-second per-node. If unset the default of 20 msg/sec is used.",
           "type": "integer",
@@ -27965,7 +28061,7 @@
           "type": "string"
         },
         "maxLength": {
-          "description": "maxLength is the maximum length of the syslog message\n\nIf this field is empty, the maxLength is set to \"1024\".",
+          "description": "maxLength is the maximum length of the log message.\n\nValid values are integers in the range 480 to 4096, inclusive.\n\nWhen omitted, the default value is 1024.",
           "type": "integer",
           "format": "int64"
         },
@@ -28007,6 +28103,11 @@
         "policy": {
           "description": "Policy is used to determine the order in which upstream servers are selected for querying. Any one of the following values may be specified:\n\n* \"Random\" picks a random upstream server for each query. * \"RoundRobin\" picks upstream servers in a round-robin order, moving to the next server for each new query. * \"Sequential\" tries querying upstream servers in a sequential order until one responds, starting with the first server for each new query.\n\nThe default value is \"Sequential\"",
           "type": "string"
+        },
+        "protocolStrategy": {
+          "description": "protocolStrategy specifies the protocol to use for upstream DNS requests. Valid values for protocolStrategy are \"TCP\" and omitted. When omitted, this means no opinion and the platform is left to choose a reasonable default, which is subject to change over time. The current default is to use the protocol of the original client request. \"TCP\" specifies that the platform should use TCP for all upstream DNS requests, even if the client request uses UDP. \"TCP\" is useful for UDP-specific issues such as those created by non-compliant upstream resolvers, but may consume more bandwidth or increase DNS response time. Note that protocolStrategy only affects the protocol of DNS requests that CoreDNS makes to upstream resolvers. It does not affect the protocol of DNS requests between clients and CoreDNS.",
+          "type": "string",
+          "default": ""
         },
         "transportConfig": {
           "description": "transportConfig is used to configure the transport type, server name, and optional custom CA or CA bundle to use when forwarding DNS requests to an upstream resolver.\n\nThe default value is \"\" (empty) which results in a standard cleartext connection being used when forwarding DNS requests to an upstream resolver.",
@@ -30521,7 +30622,7 @@
           "type": "string"
         },
         "insecureEdgeTerminationPolicy": {
-          "description": "insecureEdgeTerminationPolicy indicates the desired behavior for insecure connections to a route. While each router may make its own decisions on which ports to expose, this is normally port 80.\n\n* Allow - traffic is sent to the server on the insecure port (default) * Disable - no traffic is allowed on the insecure port. * Redirect - clients are redirected to the secure port.",
+          "description": "insecureEdgeTerminationPolicy indicates the desired behavior for insecure connections to a route. While each router may make its own decisions on which ports to expose, this is normally port 80.\n\n* Allow - traffic is sent to the server on the insecure port (edge/reencrypt terminations only) (default). * None - no traffic is allowed on the insecure port. * Redirect - clients are redirected to the secure port.",
           "type": "string"
         },
         "key": {
@@ -34933,7 +35034,7 @@
       ],
       "properties": {
         "name": {
-          "description": "The header field name",
+          "description": "The header field name. This will be canonicalized upon output, so case-variant names will be understood as the same header.",
           "type": "string",
           "default": ""
         },
@@ -38521,7 +38622,7 @@
       ],
       "properties": {
         "localhostProfile": {
-          "description": "localhostProfile indicates a profile defined in a file on the node should be used. The profile must be preconfigured on the node to work. Must be a descending path, relative to the kubelet's configured seccomp profile location. Must only be set if type is \"Localhost\".",
+          "description": "localhostProfile indicates a profile defined in a file on the node should be used. The profile must be preconfigured on the node to work. Must be a descending path, relative to the kubelet's configured seccomp profile location. Must be set if type is \"Localhost\". Must NOT be set for any other type.",
           "type": "string"
         },
         "type": {
@@ -39073,7 +39174,7 @@
           "type": "string"
         },
         "loadBalancerIP": {
-          "description": "Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. Deprecated: This field was under-specified and its meaning varies across implementations, and it cannot support dual-stack. As of Kubernetes v1.24, users are encouraged to use implementation-specific annotations when available. This field may be removed in a future API version.",
+          "description": "Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. Deprecated: This field was under-specified and its meaning varies across implementations. Using it is non-portable and it may not support dual-stack. Users are encouraged to use implementation-specific annotations when available.",
           "type": "string"
         },
         "loadBalancerSourceRanges": {
@@ -39877,7 +39978,7 @@
           "type": "string"
         },
         "hostProcess": {
-          "description": "HostProcess determines if a container should be run as a 'Host Process' container. This field is alpha-level and will only be honored by components that enable the WindowsHostProcessContainers feature flag. Setting this field without the feature flag will result in errors when validating the Pod. All of a Pod's containers must have the same effective HostProcess value (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers).  In addition, if HostProcess is true then HostNetwork must also be set to true.",
+          "description": "HostProcess determines if a container should be run as a 'Host Process' container. All of a Pod's containers must have the same effective HostProcess value (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers). In addition, if HostProcess is true then HostNetwork must also be set to true.",
           "type": "boolean"
         },
         "runAsUserName": {
@@ -39952,7 +40053,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "roleRef": {
-          "description": "RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.",
+          "description": "RoleRef can only reference a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error. This field is immutable.",
           "default": {},
           "$ref": "#/definitions/io.k8s.api.rbac.v1.RoleRef"
         },
@@ -40123,7 +40224,7 @@
           "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta"
         },
         "roleRef": {
-          "description": "RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error.",
+          "description": "RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error. This field is immutable.",
           "default": {},
           "$ref": "#/definitions/io.k8s.api.rbac.v1.RoleRef"
         },
@@ -40826,9 +40927,7 @@
         "key": {
           "description": "key is the label key that the selector applies to.",
           "type": "string",
-          "default": "",
-          "x-kubernetes-patch-merge-key": "key",
-          "x-kubernetes-patch-strategy": "merge"
+          "default": ""
         },
         "operator": {
           "description": "operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.",
