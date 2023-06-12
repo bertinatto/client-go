@@ -71,6 +71,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &operatorv1.ConsoleSpecApplyConfiguration{}
 	case v1.SchemeGroupVersion.WithKind("ConsoleStatus"):
 		return &operatorv1.ConsoleStatusApplyConfiguration{}
+	case v1.SchemeGroupVersion.WithKind("ContainerLoggingDestinationParameters"):
+		return &operatorv1.ContainerLoggingDestinationParametersApplyConfiguration{}
 	case v1.SchemeGroupVersion.WithKind("CSIDriverConfigSpec"):
 		return &operatorv1.CSIDriverConfigSpecApplyConfiguration{}
 	case v1.SchemeGroupVersion.WithKind("CSISnapshotController"):
