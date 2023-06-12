@@ -38,13 +38,13 @@ github.com/google/gnostic/compiler
 github.com/google/gnostic/extensions
 github.com/google/gnostic/jsonschema
 github.com/google/gnostic/openapiv2
-github.com/google/gnostic/openapiv3
 # github.com/google/gnostic-models v0.6.8
 ## explicit; go 1.18
 github.com/google/gnostic-models/compiler
 github.com/google/gnostic-models/extensions
 github.com/google/gnostic-models/jsonschema
 github.com/google/gnostic-models/openapiv2
+github.com/google/gnostic-models/openapiv3
 # github.com/google/go-cmp v0.5.9
 ## explicit; go 1.13
 github.com/google/go-cmp/cmp
@@ -436,8 +436,8 @@ k8s.io/klog/v2/internal/clock
 k8s.io/klog/v2/internal/dbg
 k8s.io/klog/v2/internal/serialize
 k8s.io/klog/v2/internal/severity
-# k8s.io/kube-openapi v0.0.0-20230601164746-7562a1006961 => github.com/openshift/kube-openapi v0.0.0-20230324164143-98c122c21a89
-## explicit; go 1.18
+# k8s.io/kube-openapi v0.0.0-20230601164746-7562a1006961 => github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e
+## explicit; go 1.19
 k8s.io/kube-openapi/cmd/openapi-gen/args
 k8s.io/kube-openapi/pkg/builder3/util
 k8s.io/kube-openapi/pkg/cached
@@ -480,5 +480,5 @@ sigs.k8s.io/structured-merge-diff/v4/value
 ## explicit; go 1.12
 sigs.k8s.io/yaml
 # k8s.io/code-generator => github.com/openshift/kubernetes-code-generator v0.0.0-20220822200235-042483082c5e
-# k8s.io/kube-openapi => github.com/openshift/kube-openapi v0.0.0-20230324164143-98c122c21a89
+# k8s.io/kube-openapi => github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e
 # github.com/openshift/api => github.com/bertinatto/api v0.0.0-20230612162802-c6bd62d2f62d

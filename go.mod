@@ -59,7 +59,7 @@ require (
 
 replace (
 	k8s.io/code-generator => github.com/openshift/kubernetes-code-generator v0.0.0-20220822200235-042483082c5e
-	k8s.io/kube-openapi => github.com/openshift/kube-openapi v0.0.0-20230324164143-98c122c21a89
+	k8s.io/kube-openapi => github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e
 )
 
 replace github.com/openshift/api => github.com/bertinatto/api v0.0.0-20230612162802-c6bd62d2f62d
