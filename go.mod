@@ -57,3 +57,5 @@ require (
 )
 
 replace k8s.io/kube-openapi => github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e
+
+replace github.com/openshift/api => github.com/bertinatto/api v0.0.0-20230623115844-695ccc949fee
