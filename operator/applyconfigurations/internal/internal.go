@@ -806,16 +806,10 @@ var schemaYAML = typed.YAMLObject(`types:
         scalar: string
 - name: com.github.openshift.api.operator.v1.ContainerLoggingDestinationParameters
   map:
-    elementType:
-      scalar: untyped
-      list:
-        elementType:
-          namedType: __untyped_atomic_
-        elementRelationship: atomic
-      map:
-        elementType:
-          namedType: __untyped_deduced_
-        elementRelationship: separable
+    fields:
+    - name: maxLength
+      type:
+        scalar: numeric
 - name: com.github.openshift.api.operator.v1.DNS
   map:
     fields:
