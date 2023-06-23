@@ -17,6 +17,9 @@ GO_LD_FLAGS:=
 RUNTIME ?= podman
 RUNTIME_IMAGE_NAME ?= registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.20-openshift-4.14
 
+export CLIENTSET_NAME := versioned
+export CLIENTSET_PKG := clientset
+
 examples:
 	go build -o examples/build/app ./examples/build/
 .PHONY: examples
