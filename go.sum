@@ -1,5 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e h1:bl50tFbAQmBt8a5UoIyy9BTGhpyLT+UNUb7h0mpxc2c=
+github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e/go.mod h1:l8HTwL5fqnlns4jOveW1L75eo7R9KFHxiE0bsPGy428=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
@@ -89,8 +91,6 @@ github.com/openshift/api v0.0.0-20230607130528-611114dca681 h1:kSvo4fjZyYRu7z7PV
 github.com/openshift/api v0.0.0-20230607130528-611114dca681/go.mod h1:4VWG+W22wrB4HfBL88P40DxLEpSOaiBVxUnfalfJo9k=
 github.com/openshift/build-machinery-go v0.0.0-20220913142420-e25cf57ea46d h1:RR4ah7FfaPR1WePizm0jlrsbmPu91xQZnAsVVreQV1k=
 github.com/openshift/build-machinery-go v0.0.0-20220913142420-e25cf57ea46d/go.mod h1:b1BuldmJlbA/xYtdZvKi+7j5YGB44qJUJDZ9zwiNCfE=
-github.com/openshift/kube-openapi v0.0.0-20230324164143-98c122c21a89 h1:+Q//FzVM9TKZkqYAB1IkxQdf6cFiDUDR4YHQPTP20Oo=
-github.com/openshift/kube-openapi v0.0.0-20230324164143-98c122c21a89/go.mod h1:y5VtZWM9sHHc2ZodIH/6SHzXj+TPU5USoA8lcIeKEKY=
 github.com/openshift/kubernetes-code-generator v0.0.0-20220822200235-042483082c5e h1:zZezZZezYr/mOhrNr4K269XwrDVicAZ2BWBp0Jp89Pc=
 github.com/openshift/kubernetes-code-generator v0.0.0-20220822200235-042483082c5e/go.mod h1:B6jZgI3DvDFAualltPitbYMQ74NjaCFxum3YeKZZ+3w=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
