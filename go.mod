@@ -3,12 +3,12 @@ module github.com/openshift/client-go
 go 1.20
 
 require (
-	github.com/openshift/api v0.0.0-20230607130528-611114dca681
+	github.com/openshift/api v0.0.0-00010101000000-000000000000
 	github.com/openshift/build-machinery-go v0.0.0-20220913142420-e25cf57ea46d
 	github.com/spf13/pflag v1.0.5
-	k8s.io/api v0.28.0-alpha.3
-	k8s.io/apimachinery v0.28.0-alpha.3
-	k8s.io/client-go v0.28.0-alpha.3
+	k8s.io/api v0.27.3
+	k8s.io/apimachinery v0.28.0-alpha.3.0.20230628220152-83d6d372b1a4
+	k8s.io/client-go v0.27.3
 	k8s.io/code-generator v0.28.0-alpha.3
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3
 )
@@ -23,6 +23,7 @@ require (
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -58,4 +59,4 @@ require (
 
 replace k8s.io/kube-openapi => github.com/bertinatto/kube-openapi v0.0.0-20230612164728-7c1b74f1403e
 
-replace github.com/openshift/api => github.com/bertinatto/api v0.0.0-20230623115844-695ccc949fee
+replace github.com/openshift/api => github.com/bertinatto/api v0.0.0-20230707114354-cd01ddcf59ac
